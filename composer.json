@@ -1,0 +1,17 @@
+{
+    "name": "Joplin",
+    "description": "Joplin web companion",
+    "type": "project",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "Laurent Cozic"
+        }
+    ],
+    "require": {
+        "hidehalo/nanoid-php": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    }
+}

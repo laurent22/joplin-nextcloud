@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>joplin</id>
+	<name>Joplin</name>
+	<summary>Joplin web companion</summary>
+	<description><![CDATA[Joplin web companion]]></description>
+	<version>0.0.5</version>
+	<licence>MIT</licence>
+	<author mail="anon@anon.com" >Laurent Cozic</author>
+	<namespace>Joplin</namespace>
+	<category>office</category>
+	<category>organization</category>
+	<category>social</category>
+	<bugs>https://github.com/laurent22/joplin/issues</bugs>
+	<dependencies>
+		<nextcloud min-version="12" max-version="17"/>
+	</dependencies>
+	<navigations>
+		<navigation>
+			<name>Joplin</name>
+			<route>joplin.page.index</route>
+		</navigation>
+	</navigations>
+</info>
