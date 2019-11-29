@@ -16,7 +16,15 @@ use OCA\Joplin\Controller\SyncTargetsController;
 
 require (dirname(__DIR__) . '/vendor/autoload.php');
 
-$app = new App('joplin');
+class JoplinApp extends App {
+
+	public function __construct($appName, $urlParams=[]) {
+		parent::__construct($appName, $urlParams);
+	}
+
+}
+
+$app = new JoplinApp('joplin');
 $container = $app->getContainer();
 
 $container->registerService('FilesService', function($c) {
@@ -26,6 +34,13 @@ $container->registerService('FilesService', function($c) {
 $container->registerService('RootStorage', function($c) {
 	return $c->query('ServerContainer')->getUserFolder();
 });
+
+function exception_handler($exception) {
+	echo "Uncaught exception: " , $exception->getMessage(), "\n";
+}
+
+set_exception_handler('exception_handler');
+
 
 // $container->registerService('NotesController', function($c){
 // 	return new NotesController(

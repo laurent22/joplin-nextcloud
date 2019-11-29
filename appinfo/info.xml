@@ -5,7 +5,7 @@
 	<name>Joplin</name>
 	<summary>Joplin web companion</summary>
 	<description><![CDATA[Joplin web companion]]></description>
-	<version>0.0.5</version>
+	<version>0.0.7</version>
 	<licence>MIT</licence>
 	<author mail="anon@anon.com" >Laurent Cozic</author>
 	<namespace>Joplin</namespace>

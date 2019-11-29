@@ -20,5 +20,8 @@ return [
 	   // TODO: add CORS OPTION request: https://docs.nextcloud.com/server/15/developer_manual/app/requests/api.html
 	   ['name' => 'api_notes#index', 'url' => '/api/notes', 'verb' => 'GET'],
 	   ['name' => 'api_notes#get', 'url' => '/api/notes/{syncTargetId}/{noteId}', 'verb' => 'GET'],
+	   ['name' => 'api_shares#index', 'url' => '/api/shares', 'verb' => 'GET'],
+	   ['name' => 'api_shares#note_index', 'url' => '/api/notes/{syncTargetId}/{noteId}/shares', 'verb' => 'GET'],
+	   ['name' => 'api_shares#create', 'url' => '/api/shares', 'verb' => 'POST'],
     ]
 ];

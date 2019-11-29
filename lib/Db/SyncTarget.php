@@ -3,7 +3,7 @@
 namespace OCA\Joplin\Db;
 
 use OCP\AppFramework\Db\Entity;
-use Hidehalo\Nanoid\Client;
+use OCA\Joplin\Service\Uuid;
 
 class SyncTarget extends Entity {
 
@@ -11,13 +11,15 @@ class SyncTarget extends Entity {
     protected $path;
     protected $userId;
 
-    static public function newEntity($userId, $path) {
-		$nanoid = new Client();
+    static public function newEntity($userId, $path) {      
+        $now = TimeUtils::milliseconds();
         
         $e = new SyncTarget();
-        $e->setUuid($nanoid->formattedId('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 22));
+        $e->setUuid(Uuid::gen());
         $e->setUserId($userId);
         $e->setPath($path);
+        $e->setCreatedTime($now);
+        $e->setUpdatedTime($now);
 
         return $e;
     }
