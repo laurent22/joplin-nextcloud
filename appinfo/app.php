@@ -11,6 +11,8 @@
 namespace OCA\Joplin\AppInfo;
 use OCP\AppFramework\App;
 use OCA\Joplin\Service\FilesService;
+use OCA\Joplin\Service\DbService;
+use OCA\Joplin\Db\BaseModel;
 use OCA\Joplin\Controller\NotesController;
 use OCA\Joplin\Controller\SyncTargetsController;
 
@@ -35,11 +37,6 @@ $container->registerService('RootStorage', function($c) {
 	return $c->query('ServerContainer')->getUserFolder();
 });
 
-function exception_handler($exception) {
-	echo "Uncaught exception: " , $exception->getMessage(), "\n";
-}
-
-set_exception_handler('exception_handler');
 
 
 // $container->registerService('NotesController', function($c){

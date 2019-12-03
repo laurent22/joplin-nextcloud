@@ -1,6 +1,8 @@
 <?php
 namespace OCA\Joplin\Service;
 
+use OCA\Joplin\Error\NotFoundException;
+
 class FilesService {
 
 	private $storage_;
@@ -9,26 +11,25 @@ class FilesService {
 		$this->storage_ = $storage;
 	}
 
-	public function getNoteFile($syncTarget, $noteId) {
-		$filePath = $syncTarget->getPath() . '/' . $noteId . '.md';
-		return $this->getFile($filePath);
+	public function noteFileContent($syncTargetPath, $noteId) {
+		$filePath = $syncTargetPath . '/' . $noteId . '.md';
+		$file = $this->file($filePath);
+		return $file->getContent();
 	}
 
-	public function getFile($path) {
-		$file = $this->storage_->get($path);
-		return $file;
-		// $file = $this->storage_->get('/Joplin/test.md');
-		// var_dump($file->getContent());die();
+	// public function getNoteFile($syncTarget, $noteId) {
+	// 	$filePath = $syncTarget->getPath() . '/' . $noteId . '.md';
+	// 	return $this->getFile($filePath);
+	// }
 
-		// $files = $this->storage_->getDirectoryListing();
-		// foreach ($files as $file) {
-		// 	var_dump($file->getInternalPath());
-		// }
-		// die();
-		
-		// $file = $this->storage_->get('About.txt');
-		// var_dump($file->getContent());die();
-		// return $file;		
+	private function file($path) {
+		try {
+			$file = $this->storage_->get($path);
+			return $file;
+		} catch (\Exception $e) {
+			if (get_class($e) === "OCP\Files\NotFoundException") throw new NotFoundException('Could not find file: ' . $path);
+			throw $e;
+		}
 	}
 
 }

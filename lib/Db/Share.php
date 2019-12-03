@@ -5,7 +5,6 @@ namespace OCA\Joplin\Db;
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 use OCA\Joplin\Service\Uuid;
-use OCA\Joplin\Service\JoplinUtils;
 use OCA\Joplin\Service\TimeUtils;
 
 class Share extends Entity implements JsonSerializable {

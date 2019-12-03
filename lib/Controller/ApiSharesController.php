@@ -9,6 +9,7 @@ use OCP\AppFramework\ApiController;
 use OCA\Joplin\Service\FilesService;
 use OCA\Joplin\Service\JoplinUtils;
 use OCA\Joplin\Service\JoplinService;
+use OCA\Joplin\Service\ModelService;
 use OCA\Joplin\Db\SyncTargetMapper;
 use OCA\Joplin\Db\SyncTarget;
 use OCA\Joplin\Db\Share;
@@ -19,17 +20,15 @@ class ApiSharesController extends ApiController {
 
 	private $userId_;
 	private $fileService_;
-	private $shareMapper_;
 	private $joplinService_;
-	private $utils_;
+	private $models_;
 
-	public function __construct($AppName, IRequest $request, $UserId, FilesService $FilesService, ShareMapper $ShareMapper, JoplinUtils $JoplinUtils, JoplinService $JoplinService){
+	public function __construct($AppName, IRequest $request, $UserId, FilesService $FilesService, ModelService $ModelService, JoplinService $JoplinService){
 		parent::__construct($AppName, $request);
 		$this->userId_ = $UserId;
 		$this->fileService_ = $FilesService;
 		$this->joplinService_ = $JoplinService;
-		$this->shareMapper_ = $ShareMapper;
-		$this->joplinUtils_ = $JoplinUtils;
+		$this->models_ = $ModelService;
 	}
 
 	/**
@@ -43,34 +42,31 @@ class ApiSharesController extends ApiController {
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * 
 	 */
 	public function create($syncTargetId, $noteId) {
 		try {
-			$note = $this->joplinService_->note($syncTargetId, $noteId);
-			$share = Share::newEntity($this->userId_, $syncTargetId, $note['id']);
-			$this->shareMapper_->insert($share);
-			return $share;
+			$model = $this->models_->get('share');
+			$note = $this->joplinService_->note($this->userId_, $syncTargetId, $noteId);
+			$share = [
+				'user_id' => $this->userId_,
+				'sync_target_id' => $syncTargetId,
+				'item_type' => JoplinUtils::TYPE_NOTE,
+				'item_id' => $noteId,
+			];
+			return $model->toApiOutputObject($model->insert($share));
 		} catch (\Exception $e) {
 			return ErrorHandler::toJsonResponse($e);
 		}
-
-		// TODO: Add timestamps to share table
-		// TODO: Add sync target ID to share table
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * 
 	 */
 	public function noteIndex($syncTargetId, $noteId) {
-		try {
-			$shares = $this->shareMapper_->findByNoteId($syncTargetId, $noteId);
-			return new JSONResponse($shares);
-		} catch (\Exception $e) {
-			return ErrorHandler::toJsonResponse($e);
-		}
+		$model = $this->models_->get('share');
+		$shares = $model->fetchAllByNoteId($this->userId_, $syncTargetId, $noteId);
+		return $model->toApiOutputArray($shares);
 	}
 
 }

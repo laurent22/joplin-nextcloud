@@ -14,7 +14,7 @@ class ErrorHandler {
 		$message = "Error $httpStatus";
 		if ($exception->getMessage()) $message = $exception->getMessage();
 
-		return new JSONResponse(array('message' => $message), $httpStatus);
+		return new JSONResponse(array('error' => $message, 'stacktrace' => $exception->getTraceAsString()), $httpStatus);
 	}
 
 }

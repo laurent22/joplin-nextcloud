@@ -14,12 +14,11 @@ class NotesController extends ApiController {
 	private $userId_;
 	private $fileService_;
 
-	public function __construct($AppName, IRequest $request, $UserId, FilesService $FilesService, SyncTargetMapper $SyncTargetMapper, JoplinUtils $JoplinUtils){
+	public function __construct($AppName, IRequest $request, $UserId, FilesService $FilesService, SyncTargetMapper $SyncTargetMapper){
 		parent::__construct($AppName, $request);
 		$this->userId_ = $UserId;
 		$this->fileService_ = $FilesService;
 		$this->syncTargetMapper_ = $SyncTargetMapper;
-		$this->joplinUtils_ = $JoplinUtils;
 	}
 
 	/**
@@ -40,7 +39,7 @@ class NotesController extends ApiController {
 	public function get($syncTargetId, $noteId) {
 		$syncTarget = $this->syncTargetMapper_->find($this->userId_, $syncTargetId);
 		$file = $this->fileService_->getNoteFile($syncTarget, $noteId);
-		$note = $this->joplinUtils_->unserializeItem($file->getContent());
+		$note = JoplinUtils::unserializeItem($file->getContent());
 		return new TemplateResponse('joplin', 'index', array(
 			'pageName' => 'note',
 			'page' => array(

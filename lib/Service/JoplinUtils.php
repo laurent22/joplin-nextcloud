@@ -4,7 +4,10 @@ namespace OCA\Joplin\Service;
 
 class JoplinUtils {
 
-	private function isoDateToMilliseconds($date) {
+	const TYPE_NOTE = 1
+	const TYPE_FOLDER = 2;
+
+	static private function isoDateToMilliseconds($date) {
 		$d = date_parse($date);
 		$ms = strtotime($date);
 		$ms *= 1000;
@@ -12,17 +15,17 @@ class JoplinUtils {
 		return (int)$ms;
 	}
 
-	private function milliseconds() {
+	static private function milliseconds() {
 		return round(microtime(true) * 1000);
 	}
 
-	private function millisecondsToIsoDate($ms) {
+	static private function millisecondsToIsoDate($ms) {
 		$s = date('c', $ms / 1000);
 		$remain = str_pad($ms % 1000, 3, '0', STR_PAD_LEFT);
 		return str_replace('+00:00', '.' . $remain, $s) . 'Z';
 	}
 
-	public function serializeItem($item) {
+	static public function serializeItem($item) {
 		$output = [];
 
 		if ($item['type_'] === 1 || $item['type_'] === 2) {
@@ -48,7 +51,7 @@ class JoplinUtils {
 		return implode("\n\n", $temp);
 	}
 
-	public function unserializeItem($content) {
+	static public function unserializeItem($content) {
 		$lines = explode("\n", $content);
 		$output = [];
 		$state = 'readingProps';
@@ -97,7 +100,7 @@ class JoplinUtils {
 		return $output;
 	}
 
-	private function unserialize_format($propName, $propValue) {
+	static private function unserialize_format($propName, $propValue) {
 		if ($propName[strlen($propName) - 1] === '_') return $propValue; // Private property
 
 		if (in_array($propName, ['created_time', 'updated_time', 'user_created_time', 'user_updated_time'])) {
@@ -110,7 +113,7 @@ class JoplinUtils {
 		return $propValue;
 	}
 
-	private function serialize_format($propName, $propValue) {
+	static private function serialize_format($propName, $propValue) {
 		if (in_array($propName, ['created_time', 'updated_time', 'sync_time', 'user_updated_time', 'user_created_time'])) {
 			if (!$propValue) return '';
 			$propValue = $this->millisecondsToIsoDate($propValue);

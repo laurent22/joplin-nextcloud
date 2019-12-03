@@ -23,5 +23,6 @@ return [
 	   ['name' => 'api_shares#index', 'url' => '/api/shares', 'verb' => 'GET'],
 	   ['name' => 'api_shares#note_index', 'url' => '/api/notes/{syncTargetId}/{noteId}/shares', 'verb' => 'GET'],
 	   ['name' => 'api_shares#create', 'url' => '/api/shares', 'verb' => 'POST'],
+	   ['name' => 'api_sync_targets#create', 'url' => '/api/sync_targets', 'verb' => 'POST'],
     ]
 ];

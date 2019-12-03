@@ -22,10 +22,22 @@ class SyncTargetMapper extends QBMapper {
                 ':user_id' => $userId,
                 ':uuid' => $uuid,
             ));
-        //    ->where(
-        //        $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
-        //    );
 
+        return $this->findEntity($qb);
+    }
+
+    public function findByPath($userId, $path) {
+        $qb = $this->db->getQueryBuilder();
+
+        $qb->select('*')
+           ->from('joplin_sync_targets')
+            ->where('user_id = :user_id AND path = :path')
+            ->setParameters(array(
+                ':user_id' => $userId,
+                ':path' => $path,
+            ));
+
+            // Fetch array - return null if empty
         return $this->findEntity($qb);
     }
 

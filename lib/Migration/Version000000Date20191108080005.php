@@ -35,12 +35,14 @@ class Version000000Date20191108080005 extends SimpleMigrationStep {
 				'length' => 2048,
 			]);
 
-			$table->addColumn('created_time', 'integer', [
+			$table->addColumn('created_time', 'bigint', [
 				'notnull' => true,
+				'length' => 13,
 			]);
 
-			$table->addColumn('updated_time', 'integer', [
+			$table->addColumn('updated_time', 'bigint', [
 				'notnull' => true,
+				'length' => 13,
 			]);
 
 			$table->setPrimaryKey(['id']);
@@ -69,17 +71,23 @@ class Version000000Date20191108080005 extends SimpleMigrationStep {
 				'length' => 22,
 			]);
 
+			$table->addColumn('item_type', 'integer', [
+				'notnull' => true,
+			]);
+
 			$table->addColumn('item_id', 'string', [
 				'notnull' => true,
 				'length' => 32,
 			]);
 
-			$table->addColumn('created_time', 'integer', [
+			$table->addColumn('created_time', 'bigint', [
 				'notnull' => true,
+				'length' => 13,
 			]);
 
-			$table->addColumn('updated_time', 'integer', [
+			$table->addColumn('updated_time', 'bigint', [
 				'notnull' => true,
+				'length' => 13,
 			]);
 
 			$table->setPrimaryKey(['id']);

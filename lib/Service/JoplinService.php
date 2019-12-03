@@ -1,33 +1,30 @@
 <?php
 namespace OCA\Joplin\Service;
 
-use OCA\Joplin\Db\SyncTargetMapper;
+use OCA\Joplin\Service\ModelService;
 use OCA\Joplin\Service\FilesService;
 use OCA\Joplin\Service\JoplinUtils;
 use OCA\Joplin\Error\NotFoundException;
 
 class JoplinService {
 
-	private $userId_;
-	private $syncTargetMapper_;
+	private $models_;
 	private $fileService_;
-	private $joplinUtils_;
 
-	public function __construct($UserId, SyncTargetMapper $SyncTargetMapper, FilesService $FilesService, JoplinUtils $JoplinUtils) {
-		$this->userId_ = $UserId;
-		$this->syncTargetMapper_ = $SyncTargetMapper;
+	public function __construct(ModelService $ModelService, FilesService $FilesService) {
+		$this->models_ = $ModelService;
 		$this->fileService_ = $FilesService;
-		$this->joplinUtils_ = $JoplinUtils;
 	}
 
-	public function item($syncTargetId, $itemId) {
-		$syncTarget = $this->syncTargetMapper_->find($this->userId_, $syncTargetId);
-		$file = $this->fileService_->getNoteFile($syncTarget, $itemId);
-		return $this->joplinUtils_->unserializeItem($file->getContent());
+	public function item($userId, $syncTargetId, $itemId) {
+		$syncTarget = $this->models_->get('syncTarget')->fetchByUuid($userId, $syncTargetId);
+		if (!$syncTarget) throw new NotFoundException("Could not find sync target \"$syncTargetId\"");
+		$noteContent = $this->fileService_->noteFileContent($syncTarget['path'], $itemId);
+		return JoplinUtils::unserializeItem($noteContent);
 	}
 
-	public function note($syncTargetId, $noteId) {
-		$note = $this->item($syncTargetId, $noteId);
+	public function note($userId, $syncTargetId, $noteId) {
+		$note = $this->item($userId, $syncTargetId, $noteId);
 		if ($note['type_'] !== 1) throw new NotFoundException("Could not find note $noteId on sync target $syncTargetId");
 		return $note;
 	}
