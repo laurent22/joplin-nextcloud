@@ -12,13 +12,27 @@ class SyncTargetModel extends BaseModel {
 		$this->setTableName('joplin_sync_targets');
 	}
 
-	public function find($userId, $uuid) {
-		
+	public function fetchByPath($userId, $path) {
+		return $this->db()->fetchOne('
+			SELECT * FROM *PREFIX*joplin_sync_targets
+			WHERE user_id = :user_id
+			AND path = :path
+		', [
+			'user_id' => $userId,	
+			'path' => $path,
+		]);
 	}
 
-	public function findByPath($userId, $path) {
-		
-		//return $this->db()->fetchAll('select * from *PREFIX*users where uid = :uid', ['uid' => 'admin']);
+	public function pathFromWebDavUrl($url) {
+		$s = explode('remote.php/webdav', $url);
+		if (count($s) !== 2) throw new \Exception('Unsupport WebDAV URL format: ' . $url);
+		return trim($s[1], '/');
+	}
+
+	public function toApiOutputObject($model) {
+		unset($model['id']);
+		unset($model['user_id']);
+		return $model;
 	}
 
 }

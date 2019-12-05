@@ -19,31 +19,6 @@ class ApiSyncTargetsController extends ApiController {
 		parent::__construct($AppName, $request);
 		$this->userId_ = $UserId;
 		$this->models_ = $ModelService;
-
-		$m = $this->models_->get('syncTarget');
-
-		// $m->insert([
-		// 	'user_id' => $UserId,
-		// 	'path' => 'Joplin',
-		// ]);
-
-		$m->update([
-			'uuid' => 'c8YUbVhvvS2HOAq7St40zr',
-			'path' => 'NewOne',
-		]);
-
-
-		die();
-
-		// var_dump('ii', $this->db_->fetchAll('select * from oc_users where uid = :uid', ['uid' => 'admin']));die();
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function index() {
-		die('SHARE');
 	}
 	
 	/**
@@ -51,18 +26,20 @@ class ApiSyncTargetsController extends ApiController {
 	 * @NoCSRFRequired
 	 * 
 	 */
-	public function create($path) {
+	public function create($webDavUrl) {
 		try {
 			$model = $this->models_->get('syncTarget');
 
-			// $existingSyncTarget = $model->
+			$path = $model->pathFromWebDavUrl($webDavUrl);
+			$syncTarget = $model->fetchByPath($this->userId_, $path);
+			if ($syncTarget) return $model->toApiOutputObject($syncTarget);
 
-			$existingSyncTarget = $this->syncTargetMapper_->findByPath($this->userId_, $path);
-			if ($existingSyncTarget) throw new BadRequestException("Sync target with path \"$path\" already exists");
+			$syncTarget = [
+				'user_id' => $this->userId_,
+				'path' => $path,
+			];
 
-			$syncTarget = SyncTarget::newEntity($this->userId_, $path);
-			$this->syncTargetMapper_->insert($syncTarget);
-			return $syncTarget;
+			return $model->toApiOutputObject($model->insert($syncTarget));
 		} catch (\Exception $e) {
 			return ErrorHandler::toJsonResponse($e);
 		}

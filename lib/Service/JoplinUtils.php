@@ -4,7 +4,7 @@ namespace OCA\Joplin\Service;
 
 class JoplinUtils {
 
-	const TYPE_NOTE = 1
+	const TYPE_NOTE = 1;
 	const TYPE_FOLDER = 2;
 
 	static private function isoDateToMilliseconds($date) {
@@ -40,7 +40,7 @@ class JoplinUtils {
 
 		foreach ($item as $k => $v) {
 			if (in_array($k, ['title', 'body', 'fileId_'])) continue;
-			$output['props'][] = $k . ': ' . $this->serialize_format($k, $v);
+			$output['props'][] = $k . ': ' . self::serialize_format($k, $v);
 		}
 
 		$temp = [];
@@ -94,7 +94,7 @@ class JoplinUtils {
 		// output = ItemClass.removeUnknownFields(output);
 
 		foreach ($output as $k => $v) {
-			$output[$k] = $this->unserialize_format($k, $v);
+			$output[$k] = self::unserialize_format($k, $v);
 		}
 
 		return $output;
@@ -105,7 +105,7 @@ class JoplinUtils {
 
 		if (in_array($propName, ['created_time', 'updated_time', 'user_created_time', 'user_updated_time'])) {
 			if (!$propValue) return 0;
-			$propValue = $this->isoDateToMilliseconds($propValue);
+			$propValue = self::isoDateToMilliseconds($propValue);
 		} else {
 			//propValue = Database.formatValue(ItemClass.fieldType(propName), propValue);
 		}
@@ -116,7 +116,7 @@ class JoplinUtils {
 	static private function serialize_format($propName, $propValue) {
 		if (in_array($propName, ['created_time', 'updated_time', 'sync_time', 'user_updated_time', 'user_created_time'])) {
 			if (!$propValue) return '';
-			$propValue = $this->millisecondsToIsoDate($propValue);
+			$propValue = self::millisecondsToIsoDate($propValue);
 		} else if ($propValue === null) {
 			$propValue = '';
 		}
