@@ -1,16 +1,10 @@
 <?php
-/**
- * Nextcloud - Notes
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @copyright Bernhard Posselt 2012, 2014
- */
+
 namespace OCA\Joplin\AppInfo;
+
 use OCP\AppFramework\App;
 use OCA\Joplin\Service\FilesService;
+use OCA\Joplin\Service\ModelService;
 use OCA\Joplin\Service\DbService;
 use OCA\Joplin\Db\BaseModel;
 use OCA\Joplin\Controller\NotesController;
@@ -27,15 +21,17 @@ class JoplinApp extends App {
 }
 
 $app = new JoplinApp('joplin');
+
 $container = $app->getContainer();
 
 $container->registerService('FilesService', function($c) {
-	return new FilesService($c->query('RootStorage'));
+	return new FilesService($c->query('ServerContainer')->getRootFolder());
 });
 
-$container->registerService('RootStorage', function($c) {
-	return $c->query('ServerContainer')->getUserFolder();
-});
+
+// $container->registerService('ModelService', function($c) {
+// 	return new ModelService($c->query('DbService'), $c->getURLGenerator());
+// });
 
 
 

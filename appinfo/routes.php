@@ -16,6 +16,7 @@ return [
 	   ['name' => 'sync_targets#index', 'url' => '/sync_targets', 'verb' => 'GET'],
 
 	   ['name' => 'notes#get', 'url' => '/notes/{syncTargetId}/{noteId}', 'verb' => 'GET'],
+	   ['name' => 'shares#get', 'url' => '/shares/{token}', 'verb' => 'GET'],
 
 	   // TODO: add CORS OPTION request: https://docs.nextcloud.com/server/15/developer_manual/app/requests/api.html
 	   ['name' => 'api_notes#index', 'url' => '/api/notes', 'verb' => 'GET'],

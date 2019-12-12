@@ -2,30 +2,25 @@
 namespace OCA\Joplin\Service;
 
 use OCA\Joplin\Error\NotFoundException;
+use OCP\Files\IRootFolder;
 
 class FilesService {
 
-	private $storage_;
+	private $rootFolder_;
 	
-	public function __construct($storage) {
-		$this->storage_ = $storage;
+	public function __construct(IRootFolder $rootFolder) {
+		$this->rootFolder_ = $rootFolder;
 	}
 
-	public function noteFileContent($syncTargetPath, $noteId) {
+	public function noteFileContent($userId, $syncTargetPath, $noteId) {
 		$filePath = $syncTargetPath . '/' . $noteId . '.md';
-		$file = $this->file($filePath);
+		$file = $this->file($userId, $filePath);
 		return $file->getContent();
 	}
 
-	// public function getNoteFile($syncTarget, $noteId) {
-	// 	$filePath = $syncTarget->getPath() . '/' . $noteId . '.md';
-	// 	return $this->getFile($filePath);
-	// }
-
-	private function file($path) {
+	private function file($userId, $path) {
 		try {
-			$file = $this->storage_->get($path);
-			return $file;
+			return $this->rootFolder_->getUserFolder($userId)->get($path);
 		} catch (\Exception $e) {
 			if (get_class($e) === "OCP\Files\NotFoundException") throw new NotFoundException('Could not find file: ' . $path);
 			throw $e;

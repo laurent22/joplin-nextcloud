@@ -49,9 +49,15 @@ class BaseModel {
 		return $output;
 	}
 
-	public function fetchByUuid($userId, $uuid) {
+	public function fetchByUserAndId($userId, $uuid) {
 		return $this->db()->fetchOne('SELECT * FROM *PREFIX*' . $this->tableName() . ' WHERE user_id = :user_id AND uuid = :uuid', [
 			'user_id' => $userId,
+			'uuid' => $uuid,
+		]);
+	}
+
+	public function fetchByUuid($uuid) {
+		return $this->db()->fetchOne('SELECT * FROM *PREFIX*' . $this->tableName() . ' WHERE uuid = :uuid', [
 			'uuid' => $uuid,
 		]);
 	}

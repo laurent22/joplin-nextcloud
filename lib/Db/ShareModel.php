@@ -7,9 +7,12 @@ use OCA\Joplin\Service\JoplinUtils;
 
 class ShareModel extends BaseModel {
 
-	public function __construct(DbService $DbService) {
+	private $baseUrl_;
+
+	public function __construct(DbService $DbService, $baseUrl) {
 		parent::__construct($DbService);
 
+		$this->baseUrl_ = $baseUrl;
 		$this->setTableName('joplin_shares');
 	}
 
@@ -29,9 +32,15 @@ class ShareModel extends BaseModel {
 	}
 
 	public function toApiOutputObject($model) {
+		$model['_url'] = $this->makeShareLink($model);
 		unset($model['id']);
 		unset($model['user_id']);
 		return $model;
+	}
+
+	private function makeShareLink($model) {
+		// http://..../shares/:share_id
+		return $this->baseUrl_ . '/shares/' . $model['uuid'];
 	}
 
 }
