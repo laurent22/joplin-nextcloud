@@ -20,8 +20,16 @@ class JoplinService {
 		$this->serverService_ = $ServerService;
 	}
 
+	private function appDir() {
+		return dirname(dirname(dirname(__FILE__)));
+	}
+
 	private function templateDir() {
-		return dirname(dirname(dirname(__FILE__))) . '/templates';
+		return $this->appDir() . '/templates';
+	}
+
+	private function cssDir() {
+		return $this->appDir() . '/css';
 	}
 
 	public function item($userId, $syncTargetId, $itemId) {
@@ -44,15 +52,51 @@ class JoplinService {
 		return $content;
 	}
 
-	public function renderView($pageName, $view = []) {
-		$templateContent = $this->loadViewContent('template');
-		$pageContent = $this->loadViewContent($pageName);
+	private function mustache() {
+		return new \Mustache_Engine();
+	}
 
-		$mustache = new \Mustache_Engine();
-		$pageHtml = $mustache->render($pageContent, $view);
+	public function renderDbTable($headers, $rows) {
+		$outputRows = [];
+		foreach ($rows as $row) {
+			$r = [];
+			foreach ($headers as $k => $header) {
+				$r[] = $row[$k];
+			}
+			$outputRows[] = $r;
+		}
+
+		$outputHeaders = [];
+		foreach ($headers as $k => $header) {
+			$outputHeaders[] = $header['label'];
+		}
+
+		return $this->renderView('content/dbTable', [
+			'rows' => $outputRows,
+			'headers' => $outputHeaders,
+		]);
+	}
+
+	public function renderView($viewName, $view = []) {
+		$viewContent = $this->loadViewContent($viewName);
+		return $this->mustache()->render($viewContent, $view);
+	}
+
+	private function cssUrl($name) {
+		$filename =  $name . '.min.css';
+		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->baseUrl() . '/css/' . $filename;
+
+		$filename =  $name . '.css';
+		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->baseUrl() . '/css/' . $filename;
+
+		throw new \Exception('Cannot find CSS file: ' . $name);
+	}
+
+	public function renderTemplate($pageName, $view = []) {
+		$templateContent = $this->loadViewContent('template');
 
 		$templateView = [
-			'pageHtml' => $pageHtml,
+			'pageHtml' => $this->renderView($pageName, $view),
 			'jsFiles' => [],
 			'cssFiles' => [],
 		];
@@ -68,18 +112,17 @@ class JoplinService {
 			}
 		}
 
-		if (isset($view['cssFiles'])) {
-			$templateView['cssFiles'] = [];
-			foreach ($view['cssFiles'] as $jsFile) {
-				$url = $this->serverService_->baseUrl() . '/css/' . $jsFile . '.css';
-				$templateView['cssFiles'][] = [
-					'url' => $url,
-				];
-			}
+		$cssFiles = array_merge(['pure', 'style'], isset($view['cssFiles']) ? $view['cssFiles'] : []);
+		$templateView['cssFiles'] = [];
+		foreach ($cssFiles as $cssFile) {
+			$url = $this->cssUrl($cssFile);
+			$templateView['cssFiles'][] = [
+				'url' => $url,
+			];
 		}
 
-		$templateHtml = $mustache->render($templateContent, $templateView);
-		
+		$templateHtml = $this->mustache()->render($templateContent, $templateView);
+
 		return new TemplateResponse('joplin', 'index', ['pageHtml' => $templateHtml]);
 	}
 

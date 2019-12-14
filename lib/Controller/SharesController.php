@@ -31,7 +31,7 @@ class SharesController extends PublicShareController {
 		$note = $this->joplinService_->note($share['user_id'], $share['sync_target_id'], $share['item_id']);
 		if (!$note) throw new NotFoundException('No note with ID ' . $share['sync_target_id'] . '/' . $share['item_id']);
 
-		return $this->joplinService_->renderView('content/note', [
+		return $this->joplinService_->renderTemplate('content/note', [
 			'jsFiles' => ['markdown-it', 'note'],
 			'cssFiles' => ['note'],
 			'note' => $note,

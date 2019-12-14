@@ -1,0 +1,16 @@
+<table class="pure-table">
+	<thead>
+		<tr>
+			{{#headers}}
+				<th>{{ . }}</th>
+			{{/headers}}	
+		</tr>
+	</thead>
+	{{#rows}}
+		<tr>
+			{{#.}}
+				<td>{{.}}</td>
+			{{/.}}
+		</tr>
+	{{/rows}}
+</table>

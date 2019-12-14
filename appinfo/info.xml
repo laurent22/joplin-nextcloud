@@ -16,10 +16,11 @@
 	<dependencies>
 		<nextcloud min-version="12" max-version="17"/>
 	</dependencies>
+
 	<navigations>
 		<navigation>
 			<name>Joplin</name>
-			<route>joplin.page.index</route>
+			<route>joplin.index.get</route>
 		</navigation>
 	</navigations>
 </info>

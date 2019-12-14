@@ -30,14 +30,6 @@ class ApiSharesController extends ApiController {
 		$this->joplinService_ = $JoplinService;
 		$this->models_ = $ModelService;
 	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function index() {
-		die('SHARE');
-	}
 	
 	/**
 	 * @NoAdminRequired
@@ -46,14 +38,18 @@ class ApiSharesController extends ApiController {
 	public function create($syncTargetId, $noteId) {
 		try {
 			$model = $this->models_->get('share');
-			$note = $this->joplinService_->note($this->userId_, $syncTargetId, $noteId);
-			$share = [
-				'user_id' => $this->userId_,
-				'sync_target_id' => $syncTargetId,
-				'item_type' => JoplinUtils::TYPE_NOTE,
-				'item_id' => $noteId,
-			];
-			return $model->toApiOutputObject($model->insert($share));
+			$share = $model->fetchByNoteId($this->userId_, $syncTargetId, $noteId);
+			if (!$share) {
+				$note = $this->joplinService_->note($this->userId_, $syncTargetId, $noteId);
+				$share = [
+					'user_id' => $this->userId_,
+					'sync_target_id' => $syncTargetId,
+					'item_type' => JoplinUtils::TYPE_NOTE,
+					'item_id' => $noteId,
+				];
+				$share = $model->insert($share);
+			}
+			return $model->toApiOutputObject($share);
 		} catch (\Exception $e) {
 			return ErrorHandler::toJsonResponse($e);
 		}

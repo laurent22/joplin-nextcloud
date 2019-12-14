@@ -62,6 +62,10 @@ class BaseModel {
 		]);
 	}
 
+	public function fetchAll() {
+		return $this->db()->fetchAll('SELECT * FROM *PREFIX*' . $this->tableName());
+	}
+
 	public function insert($model) {
 		if ($this->hasUuid()) $model['uuid'] = Uuid::gen();
 
