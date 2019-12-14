@@ -14,11 +14,13 @@ class IndexController extends Controller {
 
 	private $joplinService_;
 	private $models_;
+	private $userId_;
 
-	public function __construct($AppName, IRequest $request, ISession $session, ModelService $ModelService, JoplinService $JoplinService){
+	public function __construct($AppName, $UserId, IRequest $request, ISession $session, ModelService $ModelService, JoplinService $JoplinService){
 		parent::__construct($AppName, $request, $session);
 		$this->joplinService_ = $JoplinService;
 		$this->models_ = $ModelService;
+		$this->userId_ = $UserId;
 	}
 
 	/**
@@ -27,8 +29,8 @@ class IndexController extends Controller {
 	 */
 	public function get() {
 		try {
-			$syncTargets = $this->models_->get('syncTarget')->fetchAll();
-			$shares = $this->models_->get('share')->fetchAll();
+			$syncTargets = $this->models_->get('syncTarget')->fetchAllByUserId($this->userId_);
+			$shares = $this->models_->get('share')->fetchAllByUserId($this->userId_);
 			
 			$syncTargetsHtml = $this->joplinService_->renderDbTable([
 				'uuid' => ['label' => 'ID'],
