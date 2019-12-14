@@ -2,21 +2,20 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>joplin</id>
-	<name>Joplin</name>
-	<summary>Joplin web companion</summary>
-	<description><![CDATA[Joplin web companion]]></description>
+	<name>Joplin Web API</name>
+	<summary>Joplin Web API for Nextcloud</summary>
+	<description><![CDATA[Joplin Web API for Nextcloud]]></description>
 	<version>0.0.7</version>
-	<licence>MIT</licence>
-	<author mail="anon@anon.com" >Laurent Cozic</author>
+	<licence>apache</licence>
+	<author mail="anon@anon.com">Laurent Cozic</author>
 	<namespace>Joplin</namespace>
 	<category>office</category>
 	<category>organization</category>
 	<category>social</category>
-	<bugs>https://github.com/laurent22/joplin/issues</bugs>
+	<bugs>https://github.com/laurent22/joplin-nextcloud/issues</bugs>
 	<dependencies>
 		<nextcloud min-version="12" max-version="17"/>
 	</dependencies>
-
 	<navigations>
 		<navigation>
 			<name>Joplin</name>
