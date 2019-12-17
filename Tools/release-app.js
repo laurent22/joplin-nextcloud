@@ -168,7 +168,8 @@ async function main() {
 	const distDir = rootDir + '/dist';
 	const homeDir = require('os').homedir();
 	const tarSourcePath = 'joplin'; // Needs to be a relative path for tar to work correctly
-	const tarPath = distDir + '/joplin-' + newVersion  + '.tar.gz';
+	const tarFilename = 'joplin-' + newVersion  + '.tar.gz';
+	const tarPath = distDir + '/' + tarFilename;
 	const sigPath = distDir + '/joplin-' + newVersion  + '.sig';
 
 	process.chdir(distDir);
@@ -190,6 +191,8 @@ async function main() {
 	console.info(await execCommand('tar -czf "' + tarPath + '" "' + tarSourcePath + '"'));
 	console.info(await execCommand('openssl dgst -sha512 -sign "' + homeDir + '/.nextcloud/certificates/joplin.key" "' + tarPath + '" | openssl base64 > "' + sigPath + '"'));
 
+	const sigContent = (await fs.readFile(sigPath)).toString();
+
 	console.info(await execCommand('git add -A'));
 	console.info(await execCommand(`git commit -m "Nextcloud App release v${newVersion}"`));
 	console.info(await execCommand(`git tag ${tagName}`));
@@ -197,45 +200,39 @@ async function main() {
 	console.info(await execCommand('git push --tags'));
 
 
-	console.info('Upload new release at: https://apps.nextcloud.com/developer/apps/releases/new');
-
+	
 	console.info(`Creating GitHub release ${tagName}...`);
 
 	const oauthToken = await githubOauthToken();
 	const release = await githubRelease(projectName, tagName);
 	const uploadUrlTemplate = uriTemplate.parse(release.upload_url);
-
-	console.info(release);
-
-
-
-
-
-
-
-
-	// const releaseFile = releaseFiles[releaseFilename];
-	// const uploadUrl = uploadUrlTemplate.expand({ name: releaseFile.apkFilename });
-
-	// const binaryBody = await fs.readFile(releaseFile.apkFilePath);
-
-	// console.info(`Uploading ${releaseFile.apkFilename} to ${uploadUrl}`);
-
-	// const uploadResponse = await fetch(uploadUrl, {
-	// 	method: 'POST',
-	// 	body: binaryBody,
-	// 	headers: {
-	// 		'Content-Type': 'application/vnd.android.package-archive',
-	// 		'Authorization': `token ${oauthToken}`,
-	// 		'Content-Length': binaryBody.length,
-	// 	},
-	// });
-
-	// const uploadResponseText = await uploadResponse.text();
-	// const uploadResponseObject = JSON.parse(uploadResponseText);
-	// if (!uploadResponseObject || !uploadResponseObject.browser_download_url) throw new Error('Could not upload file to GitHub');
 	
-	// console.info(`Main download URL: ${releaseFiles['main'].downloadUrl}`);
+	const releaseFile = releaseFiles[releaseFilename];
+	const uploadUrl = uploadUrlTemplate.expand({ name: tarFilename });
+	
+	const binaryBody = await fs.readFile(tarPath);
+	
+	console.info(`Uploading ${tarPath} to ${uploadUrl}`);
+	
+	const uploadResponse = await fetch(uploadUrl, {
+		method: 'POST',
+		body: binaryBody,
+		headers: {
+			'Content-Type': 'application/vnd.android.package-archive',
+			'Authorization': `token ${oauthToken}`,
+			'Content-Length': binaryBody.length,
+		},
+	});
+	
+	const uploadResponseText = await uploadResponse.text();
+	const uploadResponseObject = JSON.parse(uploadResponseText);
+	if (!uploadResponseObject || !uploadResponseObject.browser_download_url) throw new Error('Could not upload file to GitHub');
+	
+	console.info('================================================');
+	console.info('Upload new release at: https://apps.nextcloud.com/developer/apps/releases/new');
+	console.info(`Main download URL: ${releaseFiles['main'].downloadUrl}`);
+	console.info(`Signature:`);
+	console.info(sigContent);
 }
 
 main().catch((error) => {
