@@ -5,7 +5,7 @@
 	<name>Joplin Web API</name>
 	<summary>Joplin Web API for Nextcloud</summary>
 	<description><![CDATA[Joplin Web API for Nextcloud]]></description>
-	<version>0.0.7</version>
+	<version>0.0.18</version>
 	<licence>apache</licence>
 	<author mail="anon@anon.com">Laurent Cozic</author>
 	<namespace>Joplin</namespace>
