@@ -84,10 +84,10 @@ class JoplinService {
 
 	private function cssUrl($name) {
 		$filename =  $name . '.min.css';
-		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->baseUrl() . '/css/' . $filename;
+		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->fileBaseUrl() . '/css/' . $filename;
 
 		$filename =  $name . '.css';
-		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->baseUrl() . '/css/' . $filename;
+		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->fileBaseUrl() . '/css/' . $filename;
 
 		throw new \Exception('Cannot find CSS file: ' . $name);
 	}
@@ -104,7 +104,7 @@ class JoplinService {
 		if (isset($view['jsFiles'])) {
 			$templateView['jsFiles'] = [];
 			foreach ($view['jsFiles'] as $jsFile) {
-				$url = $this->serverService_->baseUrl() . '/js/' . $jsFile . '.js';
+				$url = $this->serverService_->fileBaseUrl() . '/js/' . $jsFile . '.js';
 				$templateView['jsFiles'][] = [
 					'url' => $url,
 					'nonce' => $this->serverService_->getNonce(),

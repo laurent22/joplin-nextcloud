@@ -1,6 +1,12 @@
 <div class="joplinNote">
-	{{#note}}
-		<h1 class="joplinNoteTitle">{{title}}</h1>
-		<pre class="joplinNoteBodySource">{{body}}</pre>
-	{{/note}}
+	{{#note.encryption_applied}}
+		<h1 class="joplinNoteTitle">🔑 This note is encrypted</h1>
+	{{/note.encryption_applied}}
+
+	{{^note.encryption_applied}}
+		{{#note}}
+			<h1 class="joplinNoteTitle">{{title}}</h1>
+			<pre class="joplinNoteBodySource">{{body}}</pre>
+		{{/note}}
+	{{/note.encryption_applied}}
 </div>

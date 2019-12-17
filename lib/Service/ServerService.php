@@ -17,8 +17,16 @@ class ServerService {
 		$this->serverContainer_ = $ServerContainer;
 	}
 
+	public function fileBaseUrl() {
+		$slash = preg_quote('/', '/');
+		// The URL returned by linkToRouteAbsolute includes an "index.php" element. However when
+		// loading a JS or CSS file, that element must not be present, so we remove it here.
+		// Couldn't find how to return a URL that's valid for Nextcloud so it's a bit of a hack.
+		return preg_replace("/$slash.[^$slash]+\.php$slash/", "/", $this->baseUrl());
+	}
+
 	public function baseUrl() {
-		return trim($this->urlGenerator_->getAbsoluteURL($this->urlGenerator_->linkTo('joplin', '')), '/');
+		return trim($this->urlGenerator_->linkToRouteAbsolute('joplin.index.get'), '/');
 	}
 
 	public function getNonce() {
