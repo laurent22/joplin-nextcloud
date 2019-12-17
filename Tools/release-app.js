@@ -207,8 +207,9 @@ async function main() {
 	const release = await githubRelease(projectName, tagName);
 	const uploadUrlTemplate = uriTemplate.parse(release.upload_url);
 	
-	const releaseFile = releaseFiles[releaseFilename];
 	const uploadUrl = uploadUrlTemplate.expand({ name: tarFilename });
+
+	const downloadUrl = `https://github.com/laurent22/${projectName}/releases/download/${tagName}/${tarFilename}`;
 	
 	const binaryBody = await fs.readFile(tarPath);
 	
@@ -230,7 +231,7 @@ async function main() {
 	
 	console.info('================================================');
 	console.info('Upload new release at: https://apps.nextcloud.com/developer/apps/releases/new');
-	console.info(`Main download URL: ${releaseFiles['main'].downloadUrl}`);
+	console.info(`Main download URL: ${downloadUrl}`);
 	console.info(`Signature:`);
 	console.info(sigContent);
 }
