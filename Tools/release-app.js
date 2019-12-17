@@ -231,8 +231,11 @@ async function main() {
 	
 	console.info('================================================');
 	console.info('Upload new release at: https://apps.nextcloud.com/developer/apps/releases/new');
+	console.info('');
 	console.info(`Main download URL: ${downloadUrl}`);
+	console.info('');
 	console.info(`Signature:`);
+	console.info('');
 	console.info(sigContent);
 }
 
