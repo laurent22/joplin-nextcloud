@@ -163,6 +163,8 @@ async function main() {
 	const newVersion = await increaseVersionNumber();
 	const tagName = 'v' + newVersion;
 
+	console.info('New version: ' + newVersion);
+
 	const distDir = rootDir + '/dist';
 	const homeDir = require('os').homedir();
 	const tarSourcePath = 'joplin'; // Needs to be a relative path for tar to work correctly
@@ -189,7 +191,7 @@ async function main() {
 	console.info(await execCommand('openssl dgst -sha512 -sign "' + homeDir + '/.nextcloud/certificates/joplin.key" "' + tarPath + '" | openssl base64 > "' + sigPath + '"'));
 
 	console.info(await execCommand('git add -A'));
-	console.info(await execCommand(`git commit -m "Nextcloud App release v${version}"`));
+	console.info(await execCommand(`git commit -m "Nextcloud App release v${newVersion}"`));
 	console.info(await execCommand(`git tag ${tagName}`));
 	console.info(await execCommand('git push'));
 	console.info(await execCommand('git push --tags'));
