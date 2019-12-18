@@ -28,8 +28,8 @@ class JoplinService {
 		return $this->appDir() . '/templates';
 	}
 
-	private function cssDir() {
-		return $this->appDir() . '/css';
+	private function fileDir($type) {
+		return $this->appDir() . '/' . $type;
 	}
 
 	public function item($userId, $syncTargetId, $itemId) {
@@ -82,14 +82,37 @@ class JoplinService {
 		return $this->mustache()->render($viewContent, $view);
 	}
 
-	private function cssUrl($name) {
-		$filename =  $name . '.min.css';
-		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->fileBaseUrl() . '/css/' . $filename;
+	private function fileInfo($type, $name) {
+		$ext = $type;
+		$url = '';
+		$filename = '';
 
-		$filename =  $name . '.css';
-		if (file_exists($this->cssDir() . '/' . $filename)) return $this->serverService_->fileBaseUrl() . '/css/' . $filename;
+		$possibleFilenames = [
+			$name . '.min.' . $ext,
+			$name . '.' . $ext
+		];
 
-		throw new \Exception('Cannot find CSS file: ' . $name);
+		foreach ($possibleFilenames as $possibleFilename) {
+			$filePath = $this->fileDir($type) . '/' . $possibleFilename;
+			if (file_exists($filePath)) {
+				$filename = $possibleFilename;
+				$url = $this->serverService_->fileBaseUrl() . '/' . $ext . '/' . $filename;
+				break;
+			}
+		}
+
+		if (!$filename) throw new \Exception('Cannot find file: ' . $name);
+
+		// Originally, the CSS and JS files were included from Mustache templates to reduce the dependency
+		// to the Nextcloud framework, but Nextcloud makes it nearly impossible to know what's the URL of an
+		// asset is going to be, so the files are now included with the global function `script()` and `style()`.
+		// https://discourse.joplinapp.org/t/joplin-web-api-for-nextcloud/4491/18?u=laurent
+		return [
+			// 'url' => $url,
+			// 'filename' => $filename,
+			'filenameNoExt' => pathinfo($filename, PATHINFO_FILENAME),
+			// 'nonce' => $this->serverService_->getNonce(),
+		];
 	}
 
 	public function renderTemplate($pageName, $view = []) {
@@ -101,29 +124,23 @@ class JoplinService {
 			'cssFiles' => [],
 		];
 
-		if (isset($view['jsFiles'])) {
-			$templateView['jsFiles'] = [];
-			foreach ($view['jsFiles'] as $jsFile) {
-				$url = $this->serverService_->fileBaseUrl() . '/js/' . $jsFile . '.js';
-				$templateView['jsFiles'][] = [
-					'url' => $url,
-					'nonce' => $this->serverService_->getNonce(),
-				];
-			}
+		$jsFiles = isset($view['jsFiles']) ? $view['jsFiles'] : [];
+		foreach ($view['jsFiles'] as $jsFile) {
+			$templateView['jsFiles'][] = $this->fileInfo('js', $jsFile);
 		}
 
 		$cssFiles = array_merge(['pure', 'style'], isset($view['cssFiles']) ? $view['cssFiles'] : []);
-		$templateView['cssFiles'] = [];
 		foreach ($cssFiles as $cssFile) {
-			$url = $this->cssUrl($cssFile);
-			$templateView['cssFiles'][] = [
-				'url' => $url,
-			];
+			$templateView['cssFiles'][] = $this->fileInfo('css', $cssFile);
 		}
 
 		$templateHtml = $this->mustache()->render($templateContent, $templateView);
 
-		return new TemplateResponse('joplin', 'index', ['pageHtml' => $templateHtml]);
+		return new TemplateResponse('joplin', 'index', [
+			'pageHtml' => $templateHtml,
+			'jsFiles' => $templateView['jsFiles'],
+			'cssFiles' => $templateView['cssFiles'],
+		]);
 	}
 
 }
