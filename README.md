@@ -1,3 +1,7 @@
+* * *
+**Important note about the future of this plugin**: Currently the plugin is not actively developed and it's not clear if development will resume on it. It's possible that Joplin will provide sharing and collaboration features via a different route. So while the plugin might work it's recommended not to rely on it too much.
+* * *
+
 # Joplin
 Place this app in **nextcloud/apps/**
 
